@@ -3,6 +3,7 @@
   name: About RuneScape HiScores
   description: Shows RuneScape HiScores with an overall rank headline and best-ranked categories. Supports regular players, Ironman, Hardcore Ironman, and leagues.
   category: games,analytics
+  learn_more_url: https://trmnl-runescape.maddy.tech
   github_url: https://github.com/Me4502/trmnl-runescape
   email_address: trmnl@madelinemiller.dev
 
