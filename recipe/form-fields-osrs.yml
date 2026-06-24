@@ -2,7 +2,7 @@
   field_type: author_bio
   name: About Old School RuneScape HiScores
   description: Shows Old School RuneScape HiScores with an overall rank headline and best-ranked categories. Supports regular players, solo Ironman variants, Deadman, and leagues.
-  category: analytics
+  category: games,analytics
   github_url: https://github.com/Me4502/trmnl-runescape
   email_address: trmnl@madelinemiller.dev
 
