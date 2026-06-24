@@ -2,31 +2,56 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>TRMNL RuneScape HiScores</title>
+    <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
-    <h1>TRMNL RuneScape HiScores</h1>
-    <p>Micro-service to show rank-first RuneScape HiScores on TRMNL. API Routes:</p>
-    <h2>RuneScape</h2>
-    <pre>GET /api/rs3/summary?mode=player&amp;name=Zezima</pre>
-    <pre>GET /api/rs3/summary?mode=ironman&amp;name=Zezima</pre>
-    <pre>GET /api/rs3/summary?mode=hardcore_ironman&amp;name=Zezima</pre>
-    <pre>GET /api/rs3/summary?mode=leagues&amp;name=Zezima</pre>
-    <h2>Old School</h2>
-    <pre>GET /api/osrs/summary?mode=player&amp;name=Zezima</pre>
-    <pre>GET /api/osrs/summary?mode=ironman&amp;name=Zezima</pre>
-    <pre>GET /api/osrs/summary?mode=hardcore_ironman&amp;name=Zezima</pre>
-    <pre>GET /api/osrs/summary?mode=ultimate_ironman&amp;name=Zezima</pre>
-    <pre>GET /api/osrs/summary?mode=deadman&amp;name=Zezima</pre>
-    <pre>GET /api/osrs/summary?mode=leagues&amp;name=Zezima</pre>
-    <p>No API key or authentication is required.</p>
-    <p>
-      Group Ironman is not currently supported; player and current/latest Leagues HiScores are
-      implemented because their public endpoint shape is stable.
-    </p>
-    <p>
-      Created by <a href="https://madelinemiller.dev/">Me4502</a>. Source code available on
-      <a href="https://github.com/me4502/trmnl-runescape">GitHub</a>.
-    </p>
+    <main class="page stack">
+      <section class="hero card">
+        <span class="eyebrow">TRMNL plugin helper</span>
+        <h1>RuneScape HiScores</h1>
+        <p class="lead">
+          A micro-service for rank-first RuneScape and Old School RuneScape HiScores screens on
+          TRMNL.
+        </p>
+      </section>
+
+      <section class="grid">
+        <div class="card">
+          <h2>RuneScape</h2>
+          <div class="routes">
+            <pre>GET /api/rs3/summary?mode=player&amp;name=Zezima</pre>
+            <pre>GET /api/rs3/summary?mode=ironman&amp;name=Zezima</pre>
+            <pre>GET /api/rs3/summary?mode=hardcore_ironman&amp;name=Zezima</pre>
+            <pre>GET /api/rs3/summary?mode=leagues&amp;name=Zezima</pre>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Old School</h2>
+          <div class="routes">
+            <pre>GET /api/osrs/summary?mode=player&amp;name=Zezima</pre>
+            <pre>GET /api/osrs/summary?mode=ironman&amp;name=Zezima</pre>
+            <pre>GET /api/osrs/summary?mode=hardcore_ironman&amp;name=Zezima</pre>
+            <pre>GET /api/osrs/summary?mode=ultimate_ironman&amp;name=Zezima</pre>
+            <pre>GET /api/osrs/summary?mode=deadman&amp;name=Zezima</pre>
+            <pre>GET /api/osrs/summary?mode=leagues&amp;name=Zezima</pre>
+          </div>
+        </div>
+      </section>
+
+      <section class="card stack">
+        <p>No API key or authentication is required.</p>
+        <p>
+          Group Ironman is not currently supported; player and current/latest Leagues HiScores are
+          implemented because their public endpoint shape is stable.
+        </p>
+        <p>
+          Created by <a href="https://madelinemiller.dev/">Me4502</a>. Source code available on
+          <a href="https://github.com/me4502/trmnl-runescape">GitHub</a>.
+        </p>
+      </section>
+    </main>
   </body>
 </html>
