@@ -1,0 +1,31 @@
+- keyname: about
+  field_type: author_bio
+  name: About RuneScape HiScores
+  description: Shows RuneScape HiScores with an overall rank headline and best-ranked categories. Supports regular players, Ironman, Hardcore Ironman, and leagues.
+  category: analytics
+  github_url: https://github.com/Me4502/trmnl-runescape
+  email_address: trmnl@madelinemiller.dev
+
+- keyname: mode
+  field_type: select
+  name: HiScores mode
+  description: Select which RuneScape HiScores mode to display.
+  options:
+    - Player: player
+    - Ironman: ironman
+    - Hardcore Ironman: hardcore_ironman
+    - Leagues: leagues
+  default: player
+
+- keyname: player_name
+  field_type: text
+  name: RuneScape name
+  placeholder: Zezima
+  description: RuneScape display name to look up on the RuneScape HiScores.
+  required: true
+
+- keyname: instance_title
+  field_type: string
+  name: Display title
+  default: RuneScape HiScores
+  optional: true

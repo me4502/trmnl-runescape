@@ -1,0 +1,42 @@
+<div class="layout layout--col gap--small">
+  {% if ok == false %}
+    {% render 'error_state', error: error, instance_title: instance_title, gameName: gameName %}
+  {% else %}
+    <div class="grid grid--cols-2 portrait:grid--cols-1">
+      <div class="col">
+        {% render 'rank_stat',
+          label: headline.label,
+          value: headline.rank,
+          fit: true,
+          size: 'value--small portrait:value--base'
+        %}
+      </div>
+      <div class="col">
+        {% render 'value_stat',
+          label: headline.valueLabel,
+          value: headline.value,
+          fit: true,
+          size: 'value--small portrait:value--base'
+        %}
+      </div>
+
+      <div class="col col--span-2 hidden lg:visible">
+        {% assign visible_entry_count = 2 %}
+        <div class="grid grid--cols-2">
+          {% for entry in entries %}
+            <div class="col {% if forloop.index > visible_entry_count %}hidden{% endif %}">
+              {% render 'entry_row', entry: entry %}
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  {% endif %}
+</div>
+
+{% render 'title_bar',
+  instance_title: instance_title,
+  subjectName: subjectName,
+  gameName: gameName,
+  modeName: modeName
+%}
