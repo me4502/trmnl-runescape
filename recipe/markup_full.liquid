@@ -2,35 +2,25 @@
   {% if ok == false %}
     {% render 'error_state', error: error, instance_title: instance_title, gameName: gameName %}
   {% else %}
-    <div class="grid grid--cols-2 lg:portrait:grid--cols-1">
+    <div class="grid grid--cols-2">
       <div class="col">
-        {% render 'rank_stat',
-          label: headline.label,
-          value: headline.rank,
-          fit: true,
-          size: 'value--large'
-        %}
+        {% render 'rank_stat', label: headline.label, value: headline.rank, fit: true, size: 'value--large' %}
       </div>
       <div class="col">
-        {% render 'value_stat',
-          label: headline.valueLabel,
-          value: headline.value,
-          fit: true,
-          size: 'value--large'
-        %}
+        {% render 'value_stat', label: headline.valueLabel, value: headline.value, fit: true, size: 'value--large' %}
       </div>
     </div>
     <div class="columns">
       <div class="column">
         <span class="label label--underline">{{ subjectName }} · best ranks</span>
-        {% assign visible_entry_count = 10 %}
-        <div class="grid grid--cols-2">
-          {% for entry in entries %}
-            <div class="col {% if forloop.index > visible_entry_count %}hidden{% endif %}">
-              {% render 'entry_row', entry: entry %}
-            </div>
-          {% endfor %}
-        </div>
+      </div>
+    </div>
+
+    <div class="columns" data-overflow-max-cols="2" data-overflow-counter="true">
+      <div class="column">
+        {% for entry in entries %}
+          {% render 'entry_row', entry: entry %}
+        {% endfor %}
       </div>
     </div>
   {% endif %}

@@ -47,8 +47,8 @@
     <span class="value value--tnums value--xsmall lg:value--small" data-value-fit="true">
       #{{- entry.rank | number_with_delimiter -}}
     </span>
-    <span class="label label--small" data-clamp="1">
-      {{ entry.label | truncate: 24 }}
+    <span class="label label--small">
+      {{ entry.label }}
       {% if entry.value %}
         · {{ entry.valueLabel | downcase }} {{ entry.value | number_with_delimiter }}
       {% endif %}
@@ -77,7 +77,7 @@
     {% if subjectName %}
       {{ subjectName | truncate: 20 }} ·
     {% endif %}
-    {{ gameName }} · {{ modeName }}
+    {{ modeName }}
   </span>
 </div>
 {% endtemplate %}

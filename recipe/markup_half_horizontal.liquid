@@ -24,14 +24,14 @@
     <div class="columns">
       <div class="column">
         <span class="label label--underline">{{ subjectName }} · best ranks</span>
-        {% assign visible_entry_count = 4 %}
-        <div class="grid grid--cols-2">
-          {% for entry in entries %}
-            <div class="col {% if forloop.index > visible_entry_count %}hidden{% endif %}">
-              {% render 'entry_row', entry: entry %}
-            </div>
-          {% endfor %}
-        </div>
+      </div>
+    </div>
+
+    <div class="columns" data-overflow-max-cols="2" data-overflow-counter="true">
+      <div class="column">
+        {% for entry in entries %}
+          {% render 'entry_row', entry: entry %}
+        {% endfor %}
       </div>
     </div>
   {% endif %}
