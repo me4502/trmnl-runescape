@@ -5,7 +5,7 @@ import { HiscoresParseError, parsePlayerHiscores } from "./parser.js";
 const API_ORIGIN = "https://secure.runescape.com";
 const MAX_HISCORES_BYTES = 64 * 1024;
 
-export class HiscoresApiError extends Error {
+class HiscoresApiError extends Error {
   constructor(
     message: string,
     readonly status: number,

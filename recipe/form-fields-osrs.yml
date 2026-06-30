@@ -21,7 +21,7 @@
   default: player
 
 - keyname: player_name
-  field_type: text
+  field_type: string
   name: Old School name
   placeholder: Zezima
   description: Old School display name to look up on the HiScores.

@@ -19,14 +19,14 @@
     "prune": "knip"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20260621.1",
+    "@cloudflare/workers-types": "^4.20260629.1",
     "@types/node": "^25.9.4",
-    "knip": "^6.17.1",
-    "oxfmt": "^0.55.0",
-    "oxlint": "^1.70.0",
+    "knip": "^6.23.0",
+    "oxfmt": "^0.56.0",
+    "oxlint": "^1.71.0",
     "typescript": "^6.0.3",
     "vitest": "^4.1.9",
-    "wrangler": "^4.103.0"
+    "wrangler": "^4.105.0"
   },
   "dependenciesMeta": {
     "esbuild": {
