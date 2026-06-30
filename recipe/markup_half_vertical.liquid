@@ -2,7 +2,7 @@
   {% if ok == false %}
     {% render 'error_state', error: error, instance_title: instance_title, gameName: gameName %}
   {% else %}
-    <div class="grid grid--cols-2">
+    <div class="grid grid--cols-2 lg:portrait:grid--cols-1">
       <div class="col">
         {% render 'rank_stat', label: headline.label, value: headline.rank, fit: true, size: 'value--small' %}
       </div>
@@ -10,19 +10,12 @@
         {% render 'value_stat', label: headline.valueLabel, value: headline.value, fit: true, size: 'value--small' %}
       </div>
     </div>
-
     <div class="columns">
       <div class="column">
-        <span class="label label--underline">Best ranks</span>
+        <span class="label label--underline">{{ subjectName }} · best ranks</span>
       </div>
     </div>
-
-    <div
-      class="columns"
-      data-overflow-max-cols="1"
-      data-overflow-cols-lg="2"
-      data-overflow-counter="true"
-    >
+    <div class="columns" data-overflow-max-cols="1" data-overflow-cols-lg="2" data-overflow-counter="true">
       <div class="column">
         {% for entry in entries %}
           {% render 'entry_row', entry: entry %}
@@ -31,7 +24,6 @@
     </div>
   {% endif %}
 </div>
-
 {% render 'title_bar',
   instance_title: instance_title,
   subjectName: subjectName,

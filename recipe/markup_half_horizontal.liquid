@@ -20,14 +20,12 @@
         %}
       </div>
     </div>
-
     <div class="columns">
       <div class="column">
         <span class="label label--underline">{{ subjectName }} · best ranks</span>
       </div>
     </div>
-
-    <div class="columns" data-overflow-max-cols="2" data-overflow-counter="true">
+    <div class="columns" data-overflow-max-cols="2" data-overflow-max-cols-lg="3" data-overflow-counter="true">
       <div class="column">
         {% for entry in entries %}
           {% render 'entry_row', entry: entry %}
@@ -36,7 +34,6 @@
     </div>
   {% endif %}
 </div>
-
 {% render 'title_bar',
   instance_title: instance_title,
   subjectName: subjectName,

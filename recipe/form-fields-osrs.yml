@@ -30,5 +30,5 @@
 - keyname: instance_title
   field_type: string
   name: Display title
-  default: OSRS HiScores
+  default: Old School HiScores
   optional: true

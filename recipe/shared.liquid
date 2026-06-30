@@ -59,7 +59,13 @@
 
 {% template error_state %}
 <div class="markdown">
-  <span class="title">{{ instance_title | default: 'RuneScape HiScores' }}</span>
+  <span class="title">
+    {% if instance_title %}
+      {{ instance_title }}
+    {% else %}
+      {{ gameName | default: 'RuneScape' }} HiScores
+    {% endif %}
+  </span>
   {% if error %}
     <div class="content">{{ error }}</div>
   {% else %}
@@ -72,7 +78,13 @@
 {% template title_bar %}
 <div class="title_bar">
   <img class="image" src="https://trmnl.com/images/plugins/trmnl--render.svg">
-  <span class="title">{{ instance_title | default: 'RuneScape HiScores' }}</span>
+  <span class="title">
+    {% if instance_title %}
+      {{ instance_title }}
+    {% else %}
+      {{ gameName | default: 'RuneScape' }} HiScores
+    {% endif %}
+  </span>
   <span class="instance">
     {% if subjectName %}
       {{ subjectName | truncate: 20 }} ·

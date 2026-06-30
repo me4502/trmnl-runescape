@@ -128,4 +128,47 @@ describe("parsePlayerHiscores", () => {
     });
     expect(summary.entries[0]?.label).toBe("Defence");
   });
+
+  it("keeps the current OSRS category order aligned with newer activities and bosses", () => {
+    const definition = getGameDefinition("osrs");
+    if (!definition) {
+      throw new Error("Missing OSRS definition");
+    }
+
+    const text = definition.categories
+      .map((category) => {
+        if (category.label === "Overall") {
+          return "1593799,1466,27957906";
+        }
+        if (category.label === "Grid Points") {
+          return "99,123";
+        }
+        if (category.label === "Wintertodt") {
+          return "42,702";
+        }
+        return "-1,0";
+      })
+      .join("\n");
+
+    const summary = parsePlayerHiscores(text, definition);
+
+    expect(summary.entries).toEqual([
+      {
+        id: "wintertodt",
+        label: "Wintertodt",
+        kind: "boss",
+        rank: 42,
+        valueLabel: "KC",
+        value: 702,
+      },
+      {
+        id: "grid_points",
+        label: "Grid Points",
+        kind: "activity",
+        rank: 99,
+        valueLabel: "Points",
+        value: 123,
+      },
+    ]);
+  });
 });

@@ -98,9 +98,11 @@ const OSRS_SKILL_NAMES = [
   "Runecraft",
   "Hunter",
   "Construction",
+  "Sailing",
 ];
 
 const OSRS_ACTIVITY_NAMES = [
+  "Grid Points",
   "League Points",
   "Deadman Points",
   "Bounty Hunter - Hunter",
@@ -119,6 +121,7 @@ const OSRS_ACTIVITY_NAMES = [
   "Soul Wars Zeal",
   "Rifts closed",
   "Colosseum Glory",
+  "Collections Logged",
 ];
 
 const OSRS_BOSS_NAMES = [
@@ -128,6 +131,7 @@ const OSRS_BOSS_NAMES = [
   "Araxxor",
   "Artio",
   "Barrows Chests",
+  "Brutus",
   "Bryophyta",
   "Callisto",
   "Calvar'ion",
@@ -143,6 +147,7 @@ const OSRS_BOSS_NAMES = [
   "Dagannoth Rex",
   "Dagannoth Supreme",
   "Deranged Archaeologist",
+  "Doom of Mokhaiotl",
   "Duke Sucellus",
   "General Graardor",
   "Giant Mole",
@@ -163,6 +168,7 @@ const OSRS_BOSS_NAMES = [
   "Sarachnis",
   "Scorpia",
   "Scurrius",
+  "Shellbane Gryphon",
   "Skotizo",
   "Sol Heredit",
   "Spindel",
