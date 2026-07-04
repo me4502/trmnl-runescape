@@ -135,31 +135,30 @@ describe("parsePlayerHiscores", () => {
       throw new Error("Missing OSRS definition");
     }
 
-    const text = definition.categories
-      .map((category) => {
-        if (category.label === "Overall") {
-          return "1593799,1466,27957906";
-        }
-        if (category.label === "Grid Points") {
-          return "99,123";
-        }
-        if (category.label === "Wintertodt") {
-          return "42,702";
-        }
-        return "-1,0";
-      })
-      .join("\n");
+    const rows = Array.from({ length: definition.categories.length }, () => "-1,0");
+    rows[0] = "1593799,1466,27957906";
+    rows[25] = "99,123";
+    rows[102] = "42,302";
+    rows[114] = "43,300";
 
-    const summary = parsePlayerHiscores(text, definition);
+    const summary = parsePlayerHiscores(rows.join("\n"), definition);
 
     expect(summary.entries).toEqual([
       {
-        id: "wintertodt",
-        label: "Wintertodt",
+        id: "thermonuclear_smoke_devil",
+        label: "Thermonuclear Smoke Devil",
         kind: "boss",
         rank: 42,
         valueLabel: "KC",
-        value: 702,
+        value: 302,
+      },
+      {
+        id: "zulrah",
+        label: "Zulrah",
+        kind: "boss",
+        rank: 43,
+        valueLabel: "KC",
+        value: 300,
       },
       {
         id: "grid_points",

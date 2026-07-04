@@ -160,6 +160,7 @@ const OSRS_BOSS_NAMES = [
   "K'ril Tsutsaroth",
   "Lunar Chests",
   "Mimic",
+  "Maggot King",
   "Nex",
   "Nightmare",
   "Phosani's Nightmare",
