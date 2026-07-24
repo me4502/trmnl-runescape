@@ -67,39 +67,32 @@ async function handleSummary(
 ): Promise<Response> {
   const mode = url.searchParams.get(MODE_PARAM) ?? "player";
   if (!isSupportedMode(mode)) {
-    return jsonResponse(
-      {
-        ok: false,
-        gameName: game.label,
-        error: `Unsupported mode: ${mode}`,
-        generatedAt: new Date().toISOString(),
-      },
-      400,
-    );
+    return jsonResponse({
+      ok: false,
+      gameName: game.label,
+      error: `Unsupported mode: ${mode}`,
+      generatedAt: new Date().toISOString(),
+    });
   }
   if (!isSupportedGameMode(game, mode)) {
-    return jsonResponse(
-      {
-        ok: false,
-        gameName: game.label,
-        error: `${getModeLabel(mode)} is not supported for ${game.label}.`,
-        generatedAt: new Date().toISOString(),
-      },
-      400,
-    );
+    return jsonResponse({
+      ok: false,
+      gameName: game.label,
+      modeName: getModeLabel(mode),
+      error: `${getModeLabel(mode)} is not supported for ${game.label}.`,
+      generatedAt: new Date().toISOString(),
+    });
   }
 
   const name = url.searchParams.get(NAME_PARAM)?.trim() ?? "";
   if (name.length === 0) {
-    return jsonResponse(
-      {
-        ok: false,
-        gameName: game.label,
-        error: `Add a ${game.label} player name.`,
-        generatedAt: new Date().toISOString(),
-      },
-      400,
-    );
+    return jsonResponse({
+      ok: false,
+      gameName: game.label,
+      modeName: getModeLabel(mode),
+      error: `Add ${game.label === "Old School" ? "an" : "a"} ${game.label} player name.`,
+      generatedAt: new Date().toISOString(),
+    });
   }
 
   const hasAuthorization = (request.headers.get("authorization")?.trim() ?? "").length > 0;

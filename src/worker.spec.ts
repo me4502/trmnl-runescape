@@ -138,11 +138,29 @@ describe("worker API caching", () => {
       createExecutionContext().ctx,
     );
 
-    expect(response.status).toBe(400);
+    expect(response.status).toBe(200);
     await expect(response.json()).resolves.toMatchObject({
       ok: false,
       gameName: "RuneScape",
+      modeName: "Ultimate Ironman",
       error: "Ultimate Ironman is not supported for RuneScape.",
+    });
+    expect(fetch).not.toHaveBeenCalled();
+  });
+
+  it("returns renderable error JSON when the player name is missing", async () => {
+    const response = await worker.fetch(
+      incomingRequest("https://example.com/api/osrs/summary?mode=player&name="),
+      undefined,
+      createExecutionContext().ctx,
+    );
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toMatchObject({
+      ok: false,
+      gameName: "Old School",
+      modeName: "Player",
+      error: "Add an Old School player name.",
     });
     expect(fetch).not.toHaveBeenCalled();
   });
