@@ -129,6 +129,8 @@ async function handleSummary(
         {
           ok: false,
           gameName: game.label,
+          modeName: getModeLabel(mode),
+          subjectName: name,
           error: upstreamError,
           generatedAt: new Date().toISOString(),
         },
@@ -142,6 +144,8 @@ async function handleSummary(
       {
         ok: false,
         gameName: game.label,
+        modeName: getModeLabel(mode),
+        subjectName: name,
         error: message,
         generatedAt: new Date().toISOString(),
       },

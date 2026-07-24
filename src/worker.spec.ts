@@ -164,6 +164,23 @@ describe("worker API caching", () => {
     });
     expect(fetch).not.toHaveBeenCalled();
   });
+
+  it("includes title bar metadata in upstream error JSON", async () => {
+    const response = await worker.fetch(
+      incomingRequest("https://example.com/api/rs3/summary?mode=player&name=Unknown%20Player"),
+      undefined,
+      createExecutionContext().ctx,
+    );
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toMatchObject({
+      ok: false,
+      gameName: "RuneScape",
+      modeName: "Player",
+      subjectName: "Unknown Player",
+      error: "That player was not found on the selected HiScores.",
+    });
+  });
 });
 
 function incomingRequest(
@@ -248,6 +265,10 @@ function createHiscoresFetchMock() {
   return vi.fn<typeof fetch>(async (input) => {
     const url = cacheKeyUrl(input);
     if (url.startsWith("https://secure.runescape.com/m=hiscore/index_lite.ws")) {
+      if (url.includes("player=Unknown+Player")) {
+        return new Response("Not found", { status: 404 });
+      }
+
       return new Response(
         [
           "6366,3211,5709998811",
