@@ -3,13 +3,15 @@
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "Bundler",
+    "allowImportingTsExtensions": true,
     "strict": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
+    "noEmit": true,
     "outDir": "dist",
     "rootDir": ".",
     "types": ["@cloudflare/workers-types", "node"]
   },
-  "include": ["src/**/*", "vitest.config.ts"]
+  "include": ["src/**/*", "scripts/**/*.ts", "vitest.config.ts"]
 }
