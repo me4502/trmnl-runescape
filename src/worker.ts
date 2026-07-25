@@ -5,18 +5,17 @@ import {
   isSupportedMode,
 } from "./hiscores/definitions.js";
 import { buildHiscoreSummary, hiscoresErrorMessage } from "./hiscores/provider.js";
-import type { HiscoreGameDefinition, ModeKey } from "./types.js";
+import type { HiscoreGameDefinition } from "./types.js";
 
 const NAME_PARAM = "name";
 const MODE_PARAM = "mode";
 // HiScores update infrequently; hourly anonymous caching keeps TRMNL polling light.
 const API_CACHE_TTL_SECONDS = 60 * 60;
-const API_CACHE_NAME = "trmnl-runescape-summary";
 
 const SUMMARY_ROUTE_MATCHER = /^\/api\/([^/]+)\/summary$/;
 
 export default {
-  async fetch(request, _env, ctx): Promise<Response> {
+  async fetch(request): Promise<Response> {
     if (request.method === "OPTIONS") {
       return new Response(null, {
         status: 204,
@@ -44,7 +43,7 @@ export default {
           );
         }
 
-        return handleSummary(request, url, game, ctx);
+        return handleSummary(request, url, game);
       }
     }
 
@@ -63,7 +62,6 @@ async function handleSummary(
   request: Request,
   url: URL,
   game: HiscoreGameDefinition,
-  ctx: ExecutionContext,
 ): Promise<Response> {
   const mode = url.searchParams.get(MODE_PARAM) ?? "player";
   if (!isSupportedMode(mode)) {
@@ -96,32 +94,17 @@ async function handleSummary(
   }
 
   const hasAuthorization = (request.headers.get("authorization")?.trim() ?? "").length > 0;
-  const cacheKey = hasAuthorization ? null : summaryCacheKey(request, game, mode, name);
-
-  if (cacheKey) {
-    const cache = await caches.open(API_CACHE_NAME);
-    const cachedResponse = await cache.match(cacheKey);
-    if (cachedResponse) {
-      return cachedResponse;
-    }
-  }
 
   try {
-    const response = jsonResponse(
+    return jsonResponse(
       await buildHiscoreSummary({
         definition: game,
         mode,
         name,
       }),
       200,
-      cacheKey ? cacheableApiHeaders() : nonCacheableApiHeaders(),
+      hasAuthorization ? nonCacheableApiHeaders() : cacheableApiHeaders(),
     );
-
-    if (cacheKey) {
-      ctx.waitUntil(putApiCache(cacheKey, response.clone()));
-    }
-
-    return response;
   } catch (error) {
     const upstreamError = hiscoresErrorMessage(error);
     if (upstreamError) {
@@ -170,21 +153,6 @@ function jsonResponse(
   });
 }
 
-function summaryCacheKey(
-  request: Request,
-  game: HiscoreGameDefinition,
-  mode: ModeKey,
-  name: string,
-): Request {
-  const cacheUrl = new URL(request.url);
-  cacheUrl.pathname = `/api/${game.key}/summary`;
-  cacheUrl.search = "";
-  cacheUrl.searchParams.set(MODE_PARAM, mode);
-  cacheUrl.searchParams.set(NAME_PARAM, name.toLowerCase());
-
-  return new Request(cacheUrl.toString(), { method: "GET" });
-}
-
 function cacheableApiHeaders(): Record<string, string> {
   return {
     "cache-control": `public, max-age=${API_CACHE_TTL_SECONDS}, s-maxage=${API_CACHE_TTL_SECONDS}`,
@@ -197,11 +165,6 @@ function nonCacheableApiHeaders(): Record<string, string> {
     "cache-control": "no-store",
     vary: "authorization",
   };
-}
-
-async function putApiCache(cacheKey: Request, response: Response): Promise<void> {
-  const cache = await caches.open(API_CACHE_NAME);
-  await cache.put(cacheKey, response);
 }
 
 function corsHeaders(): Record<string, string> {

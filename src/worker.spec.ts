@@ -2,35 +2,18 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import worker from "./worker.js";
 
-let cache: Cache;
-
 describe("worker API caching", () => {
   beforeEach(() => {
-    cache = createCacheStub();
     vi.stubGlobal("fetch", createHiscoresFetchMock());
-    vi.stubGlobal("caches", {
-      open: vi.fn<CacheStorage["open"]>(async () => cache),
-    });
   });
 
-  it("caches successful anonymous summary responses by canonical game, mode, and name", async () => {
-    const firstCtx = createExecutionContext();
-    const firstResponse = await worker.fetch(
+  it("marks successful anonymous summary responses as cacheable", async () => {
+    const response = await worker.fetch(
       incomingRequest("https://example.com/api/rs3/summary?ignored=true&mode=player&name=Zezima"),
-      undefined,
-      firstCtx.ctx,
-    );
-    await Promise.all(firstCtx.waitUntilPromises);
-
-    expect(firstResponse.headers.get("cache-control")).toBe("public, max-age=3600, s-maxage=3600");
-
-    const secondResponse = await worker.fetch(
-      incomingRequest("https://example.com/api/rs3/summary?name=zezima&mode=player"),
-      undefined,
-      createExecutionContext().ctx,
     );
 
-    await expect(secondResponse.json()).resolves.toMatchObject({
+    expect(response.headers.get("cache-control")).toBe("public, max-age=3600, s-maxage=3600");
+    await expect(response.json()).resolves.toMatchObject({
       ok: true,
       gameName: "RuneScape",
       subjectName: "Zezima",
@@ -45,8 +28,6 @@ describe("worker API caching", () => {
           authorization: "Bearer token",
         },
       }),
-      undefined,
-      createExecutionContext().ctx,
     );
 
     expect(response.headers.get("cache-control")).toBe("no-store");
@@ -54,64 +35,32 @@ describe("worker API caching", () => {
       ok: true,
       gameName: "RuneScape",
     });
-    expect(cache.match).not.toHaveBeenCalled();
-    expect(cache.put).not.toHaveBeenCalled();
   });
 
-  it("fetches Leagues summaries and includes mode in the cache key", async () => {
-    const firstCtx = createExecutionContext();
-    const firstResponse = await worker.fetch(
+  it("fetches Leagues summaries", async () => {
+    const response = await worker.fetch(
       incomingRequest("https://example.com/api/rs3/summary?mode=leagues&name=Andre%20N"),
-      undefined,
-      firstCtx.ctx,
     );
-    await Promise.all(firstCtx.waitUntilPromises);
 
-    await expect(firstResponse.json()).resolves.toMatchObject({
+    await expect(response.json()).resolves.toMatchObject({
       ok: true,
       gameName: "RuneScape",
       modeName: "Leagues",
       subjectName: "Andre N",
     });
-
-    const secondResponse = await worker.fetch(
-      incomingRequest("https://example.com/api/rs3/summary?name=andre%20n&mode=leagues"),
-      undefined,
-      createExecutionContext().ctx,
-    );
-
-    await expect(secondResponse.json()).resolves.toMatchObject({
-      ok: true,
-      modeName: "Leagues",
-    });
     expect(fetch).toHaveBeenCalledTimes(1);
   });
 
-  it("fetches solo Ironman summaries and includes mode in the cache key", async () => {
-    const firstCtx = createExecutionContext();
-    const firstResponse = await worker.fetch(
+  it("fetches solo Ironman summaries", async () => {
+    const response = await worker.fetch(
       incomingRequest("https://example.com/api/osrs/summary?mode=ironman&name=City%20Morgue"),
-      undefined,
-      firstCtx.ctx,
     );
-    await Promise.all(firstCtx.waitUntilPromises);
 
-    await expect(firstResponse.json()).resolves.toMatchObject({
+    await expect(response.json()).resolves.toMatchObject({
       ok: true,
       gameName: "Old School",
       modeName: "Ironman",
       subjectName: "City Morgue",
-    });
-
-    const secondResponse = await worker.fetch(
-      incomingRequest("https://example.com/api/osrs/summary?name=city%20morgue&mode=ironman"),
-      undefined,
-      createExecutionContext().ctx,
-    );
-
-    await expect(secondResponse.json()).resolves.toMatchObject({
-      ok: true,
-      modeName: "Ironman",
     });
     expect(fetch).toHaveBeenCalledTimes(1);
   });
@@ -119,8 +68,6 @@ describe("worker API caching", () => {
   it("fetches OSRS-only Deadman summaries", async () => {
     const response = await worker.fetch(
       incomingRequest("https://example.com/api/osrs/summary?mode=deadman&name=Aplo"),
-      undefined,
-      createExecutionContext().ctx,
     );
 
     await expect(response.json()).resolves.toMatchObject({
@@ -134,8 +81,6 @@ describe("worker API caching", () => {
   it("rejects OSRS-only modes for RuneScape", async () => {
     const response = await worker.fetch(
       incomingRequest("https://example.com/api/rs3/summary?mode=ultimate_ironman&name=Zezima"),
-      undefined,
-      createExecutionContext().ctx,
     );
 
     expect(response.status).toBe(200);
@@ -151,8 +96,6 @@ describe("worker API caching", () => {
   it("returns renderable error JSON when the player name is missing", async () => {
     const response = await worker.fetch(
       incomingRequest("https://example.com/api/osrs/summary?mode=player&name="),
-      undefined,
-      createExecutionContext().ctx,
     );
 
     expect(response.status).toBe(200);
@@ -168,8 +111,6 @@ describe("worker API caching", () => {
   it("includes title bar metadata in upstream error JSON", async () => {
     const response = await worker.fetch(
       incomingRequest("https://example.com/api/rs3/summary?mode=player&name=Unknown%20Player"),
-      undefined,
-      createExecutionContext().ctx,
     );
 
     expect(response.status).toBe(200);
@@ -188,67 +129,6 @@ function incomingRequest(
   init?: RequestInit,
 ): Request<unknown, IncomingRequestCfProperties<unknown>> {
   return new Request(input, init) as Request<unknown, IncomingRequestCfProperties<unknown>>;
-}
-
-function createExecutionContext(): {
-  ctx: ExecutionContext;
-  waitUntilPromises: Promise<unknown>[];
-} {
-  const waitUntilPromises: Promise<unknown>[] = [];
-  return {
-    ctx: {
-      waitUntil(promise) {
-        waitUntilPromises.push(promise);
-      },
-      passThroughOnException() {},
-      props: undefined,
-      tracing: createTracingStub(),
-    },
-    waitUntilPromises,
-  };
-}
-
-function createTracingStub(): Tracing {
-  const span: Span = {
-    get isTraced() {
-      return false;
-    },
-    setAttribute() {},
-    end() {},
-  };
-
-  return {
-    enterSpan(_name, callback, ...args) {
-      return callback(span, ...args);
-    },
-    startActiveSpan(_name, callback, ...args) {
-      return callback(span, ...args);
-    },
-    Span: class {
-      get isTraced() {
-        return false;
-      }
-
-      setAttribute() {}
-
-      end() {}
-    } as typeof Span,
-  };
-}
-
-function createCacheStub(): Cache {
-  const responses = new Map<string, Response>();
-  return {
-    add: vi.fn<Cache["add"]>(async () => {}),
-    addAll: vi.fn<Cache["addAll"]>(async () => {}),
-    delete: vi.fn<Cache["delete"]>(async () => false),
-    keys: vi.fn<Cache["keys"]>(async () => []),
-    match: vi.fn<Cache["match"]>(async (request) => responses.get(cacheKeyUrl(request))?.clone()),
-    matchAll: vi.fn<Cache["matchAll"]>(async () => []),
-    put: vi.fn<Cache["put"]>(async (request, response) => {
-      responses.set(cacheKeyUrl(request), response.clone());
-    }),
-  };
 }
 
 function cacheKeyUrl(request: RequestInfo | URL): string {
