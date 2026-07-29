@@ -16,8 +16,6 @@ const WIKI_MODULES: Record<GameKey, string> = {
   osrs: "https://oldschool.runescape.wiki/w/Module:Hiscores?action=raw",
   rs3: "https://runescape.wiki/w/Module:Hiscores?action=raw",
 };
-const OSRS_HISCORES_ORIGIN = "https://secure.runescape.com/m=hiscore_oldschool";
-const OSRS_TABLE_FETCH_BATCH_SIZE = 8;
 
 const WIKI_ID_ALIASES: Record<GameKey, Map<string, string>> = {
   osrs: new Map([
@@ -31,6 +29,7 @@ const WIKI_ID_ALIASES: Record<GameKey, Map<string, string>> = {
     ["last_man_standing", "lms_rank"],
     ["emir_s_arena", "pvp_arena_rank"],
     ["guardians_of_the_rift", "rifts_closed"],
+    ["chambers_of_xeric_challenge", "chambers_of_xeric_challenge_mode"],
     ["the_mimic", "mimic"],
     ["the_nightmare", "nightmare"],
     ["theatre_of_blood_hard", "theatre_of_blood_hard_mode"],
@@ -79,7 +78,7 @@ if (failures.length > 0) {
 async function checkGame(game: GameKey): Promise<CheckResult> {
   const [localDefinitions, upstreamDefinitions] = await Promise.all([
     localDefinitionsForGame(game),
-    upstreamDefinitionsForGame(game),
+    wikiDefinitionsForGame(game),
   ]);
 
   return {
@@ -96,14 +95,6 @@ function localDefinitionsForGame(game: GameKey): HiscoreCategoryDefinition[] {
   }
 
   return definition.categories;
-}
-
-async function upstreamDefinitionsForGame(game: GameKey): Promise<UpstreamDefinition[]> {
-  if (game === "osrs") {
-    return osrsDefinitionsFromWikiAndOfficialPages();
-  }
-
-  return wikiDefinitionsForGame(game);
 }
 
 async function wikiDefinitionsForGame(game: GameKey): Promise<UpstreamDefinition[]> {
@@ -125,70 +116,6 @@ async function wikiDefinitionsForGame(game: GameKey): Promise<UpstreamDefinition
       label: wikiName,
     };
   });
-}
-
-async function osrsDefinitionsFromWikiAndOfficialPages(): Promise<UpstreamDefinition[]> {
-  const wikiDefinitions = await wikiDefinitionsForGame("osrs");
-  const localDefinitions = localDefinitionsForGame("osrs");
-  const skillCount = localDefinitions.filter((category) => category.kind === "skill").length;
-  const nonSkillCount = localDefinitions.length - skillCount;
-
-  return [
-    ...wikiDefinitions.slice(0, skillCount),
-    ...(await officialOsrsNonSkillDefinitions(nonSkillCount)),
-  ];
-}
-
-async function officialOsrsNonSkillDefinitions(
-  nonSkillCount: number,
-  startAt = 0,
-): Promise<UpstreamDefinition[]> {
-  const batch = await Promise.all(
-    Array.from(
-      { length: Math.min(OSRS_TABLE_FETCH_BATCH_SIZE, nonSkillCount - startAt) },
-      async (_, offset) => {
-        const table = startAt + offset;
-        const label = await officialOsrsTableLabel(table);
-        return {
-          id: slugify(label),
-          label,
-        };
-      },
-    ),
-  );
-
-  if (startAt + batch.length >= nonSkillCount) {
-    return batch;
-  }
-
-  return [
-    ...batch,
-    ...(await officialOsrsNonSkillDefinitions(nonSkillCount, startAt + batch.length)),
-  ];
-}
-
-async function officialOsrsTableLabel(table: number): Promise<string> {
-  const url = new URL(`${OSRS_HISCORES_ORIGIN}/overall`);
-  url.searchParams.set("category_type", "1");
-  url.searchParams.set("table", String(table));
-
-  const response = await fetch(url, {
-    headers: {
-      Accept: "text/html",
-      "User-Agent": "trmnl-runescape stale definition check",
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error(`Failed to fetch ${url}: ${response.status}`);
-  }
-
-  const title = (await response.text()).match(/<title>Old School (.*?) Hiscores<\/title>/)?.[1];
-  if (!title) {
-    throw new Error(`Could not parse OSRS table ${table} title.`);
-  }
-
-  return title;
 }
 
 function compareDefinitions(
