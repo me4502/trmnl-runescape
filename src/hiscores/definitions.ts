@@ -161,6 +161,7 @@ const OSRS_BOSS_NAMES = [
   "Lunar Chests",
   "Mimic",
   "Maggot King",
+  "Mad Angel",
   "Nex",
   "Nightmare",
   "Phosani's Nightmare",
